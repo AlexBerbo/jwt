@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.alexberbo.jwt.domain.user.User;
 import tech.alexberbo.jwt.domain.user.UserClass;
 import tech.alexberbo.jwt.enumerators.UserRole;
@@ -22,6 +23,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import static org.apache.commons.lang3.StringUtils.*;
 import static tech.alexberbo.jwt.enumerators.UserRole.*;
 
 @Service
@@ -48,12 +50,12 @@ public class UserServiceImpl implements UserService, UserDetailsService { // Imp
 
     @Override
     public User findUserByUsername(String username) {
-        return null;
+        return userRepository.findUserByUsername(username);
     }
 
     @Override
     public User findUserByEmail(String email) {
-        return null;
+        return userRepository.findUserByEmail(email);
     }
 
     @Override
@@ -63,20 +65,24 @@ public class UserServiceImpl implements UserService, UserDetailsService { // Imp
 
     @Override
     public User register(String firstName, String lastName, String username, String email) throws UserNotFoundException, UsernameExistsException, EmailExistsException {
-        validateNewUsernameAndEmail(StringUtils.EMPTY, username, email);
+        validateNewUsernameAndEmail(EMPTY, username, email);
         User user = new User();
+        String password = generatePassword();
+        String encodedPw= passwordEncoder.encode(password);
         user.setUserId(generateUserId());
-        user.setPassword(passwordEncoder.encode(generatePassword()));
         user.setFirstName(firstName);
         user.setLastName(lastName);
         user.setUsername(username);
         user.setEmail(email);
+        user.setPassword(encodedPw);
+        user.setProfileImageUrl(getImageUrl());
         user.setJoinedDate(new Date());
-        user.setActive(true);
-        user.setNotLocked(true);
         user.setRoles(ROLE_USER.name());
         user.setAuthorities(ROLE_USER.getAuthorities());
-        user.setProfileImageUrl(getImageUrl());
+        user.setActive(true);
+        user.setNotLocked(true);
+        userRepository.save(user);
+        log.info("Password: " + password);
         return user;
     }
 
@@ -84,16 +90,16 @@ public class UserServiceImpl implements UserService, UserDetailsService { // Imp
         return UUID.randomUUID().toString();
     }
 
-    private CharSequence generatePassword() {
+    private String generatePassword() {
         return UUID.randomUUID().toString();
     }
 
     private String getImageUrl() {
-        return "Link";
+        return ServletUriComponentsBuilder.fromCurrentContextPath().path("/user/demoaopp/image/temp").toUriString();
     }
 
     private User validateNewUsernameAndEmail(String currentUserName, String newUsername, String newEmail) throws UserNotFoundException, UsernameExistsException, EmailExistsException {
-        if(StringUtils.isNotBlank(currentUserName)) {
+        if(isNotBlank(currentUserName)) {
             User currentUser = findUserByUsername(currentUserName);
             if(currentUser == null) {
                 throw new UserNotFoundException(currentUser + " not found!");

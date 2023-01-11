@@ -19,7 +19,6 @@ import java.util.List;
 
 import static tech.alexberbo.jwt.constants.SecurityConstants.*;
 @RequiredArgsConstructor
-@Component
 public class JwtAuthFilter extends OncePerRequestFilter {
     private JwtTokenGenerator jwtTokenGenerator;
     @Override

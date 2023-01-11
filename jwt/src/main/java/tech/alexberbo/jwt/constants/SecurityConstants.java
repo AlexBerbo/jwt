@@ -12,5 +12,5 @@ public class SecurityConstants {
     public static final String ACCESS_DENIED_MESSAGE = "Access denied, you do not have the permission to see this page";
     public static final String OPTIONS_HTTP_MESSAGE = "OPTIONS";
     public static final String[] PUBLIC_URLS = { "/user/login", "/user/register", "/user/resetpassword/**", "/user/image/**"};
-    public static final String[] NON_PUBLIC_URLS = { "/user/welcome", "/user/edit", "/user/delete", "/user/create" };
+    public static final String[] NON_PUBLIC_URLS = { "/user/demoapp/welcome", "/user/demoapp/edit", "/user/demoapp/delete", "/user/demoapp/create" };
 }

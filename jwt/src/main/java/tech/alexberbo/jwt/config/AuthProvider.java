@@ -2,13 +2,16 @@ package tech.alexberbo.jwt.config;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
+import tech.alexberbo.jwt.domain.user.UserClass;
 import tech.alexberbo.jwt.service.impl.UserServiceImpl;
 
 @Component
@@ -28,8 +31,7 @@ public class AuthProvider extends AbstractUserDetailsAuthenticationProvider {
             log.info("Invalid Credentials");
             throw new BadCredentialsException("Invalid Credentials");
         }
-     }
-
+    }
     @Override
     protected UserDetails retrieveUser(String username, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
         return userService.loadUserByUsername(username);
